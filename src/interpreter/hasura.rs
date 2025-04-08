@@ -124,5 +124,5 @@ pub fn interpret_expression(expression: &Expression, types: &HasuraTypes) -> Res
 }
 
 pub fn interpret(expression: &Expression, types: &HasuraTypes) -> Result<String> {
-    Ok(interpret_expression(expression, types)?)
+    interpret_expression(expression, types)
 }

@@ -71,42 +71,42 @@ pub fn interpret_expression(
             (format!("(NOT {})", clause), types)
         }
         Node::Equal(key, target) => (
-            format!("{} = ?", renames.get(key).unwrap_or_else(|| key)),
+            format!("{} = ?", renames.get(key).unwrap_or(key)),
             vec![types
                 .get(key)
                 .ok_or(Error::UnknownKey(key.to_string()))?
                 .replace_and_return(target)?],
         ),
         Node::EqualCI(key, target) => (
-            format!("{} LIKE ?", renames.get(key).unwrap_or_else(|| key)),
+            format!("{} LIKE ?", renames.get(key).unwrap_or(key)),
             vec![types
                 .get(key)
                 .ok_or(Error::UnknownKey(key.to_string()))?
                 .replace_and_return(target)?],
         ),
         Node::Greater(key, target) => (
-            format!("{} > ?", renames.get(key).unwrap_or_else(|| key)),
+            format!("{} > ?", renames.get(key).unwrap_or(key)),
             vec![types
                 .get(key)
                 .ok_or(Error::UnknownKey(key.to_string()))?
                 .replace_and_return(target)?],
         ),
         Node::Less(key, target) => (
-            format!("{} < ?", renames.get(key).unwrap_or_else(|| key)),
+            format!("{} < ?", renames.get(key).unwrap_or(key)),
             vec![types
                 .get(key)
                 .ok_or(Error::UnknownKey(key.to_string()))?
                 .replace_and_return(target)?],
         ),
         Node::Wildcard(key, target) => (
-            format!("{} LIKE ?", renames.get(key).unwrap_or_else(|| key)),
+            format!("{} LIKE ?", renames.get(key).unwrap_or(key)),
             vec![types
                 .get(key)
                 .ok_or(Error::UnknownKey(key.to_string()))?
                 .replace_and_return(&target.replace("*", "%").replace("?", "_"))?],
         ),
         Node::Regex(key, target) => (
-            format!("{} = ?", renames.get(key).unwrap_or_else(|| key)),
+            format!("{} = ?", renames.get(key).unwrap_or(key)),
             vec![types
                 .get(key)
                 .ok_or(Error::UnknownKey(key.to_string()))?
@@ -118,7 +118,7 @@ pub fn interpret_expression(
             } else {
                 format!(
                     "{} IN ({})",
-                    renames.get(key).unwrap_or_else(|| key),
+                    renames.get(key).unwrap_or(key),
                     targets.iter().map(|_| "?").collect::<Vec<_>>().join(", ")
                 )
             };
@@ -138,7 +138,7 @@ pub fn interpret_expression(
                 return Err(Error::UnknownKey(key.to_string()));
             }
             (
-                format!("{} IS NULL", renames.get(key).unwrap_or_else(|| key)),
+                format!("{} IS NULL", renames.get(key).unwrap_or(key)),
                 vec![],
             )
         }
@@ -150,5 +150,5 @@ pub fn interpret(
     renames: &SqliteRenames,
     types: &SqliteTypes,
 ) -> Result<(String, Vec<SqliteType>)> {
-    Ok(interpret_expression(expression, renames, types)?)
+    interpret_expression(expression, renames, types)
 }

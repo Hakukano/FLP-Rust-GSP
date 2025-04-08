@@ -1,6 +1,6 @@
 #![cfg(feature = "evaluate")]
 
-use flp_gsp::{interpreter::evaluate::*, Expression};
+use flp_gsp::{Expression, interpreter::evaluate::*};
 
 mod common;
 
@@ -8,7 +8,8 @@ use common::*;
 
 #[test]
 fn test_evaluate() {
-    let s = r#"(((! "age" > "18") & ("sex" ? ["male", "Male"] | "sex" ~ "Female")) & "name" * "J?c*")"#;
+    let s =
+        r#"(((! "age" > "18") & ("sex" ? ["male", "Male"] | "sex" ~ "Female")) & "name" * "J?c*")"#;
     let expression = Expression::try_from_str(s).unwrap();
 
     let mut rules = EvaluateRules::new();

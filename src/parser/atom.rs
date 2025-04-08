@@ -1,13 +1,13 @@
 use std::ops::Deref;
 
 use nom::{
+    IResult, Parser,
     branch::alt,
     bytes::complete::{escaped, tag},
     character::complete::{none_of, one_of, space0},
     combinator::map_res,
     multi::separated_list0,
-    sequence::{delimited, pair, tuple},
-    IResult,
+    sequence::{delimited, pair},
 };
 
 #[derive(Debug)]
@@ -25,7 +25,8 @@ pub fn text(input: &str) -> IResult<&str, Text> {
         Result::<Text, nom::Err<nom::error::Error<&str>>>::Ok(Text(
             s.replace("\\\\", "\\").replace("\\\"", "\"").to_string(),
         ))
-    })(input)
+    })
+    .parse(input)
 }
 
 #[derive(Debug)]
@@ -39,7 +40,7 @@ impl Deref for Array {
 pub fn array(input: &str) -> IResult<&str, Array> {
     let left = pair(tag("["), space0);
     let right = pair(space0, tag("]"));
-    let separator = tuple((space0, tag(","), space0));
+    let separator = (space0, tag(","), space0);
     map_res(
         delimited(left, separated_list0(separator, text), right),
         |texts: Vec<Text>| {
@@ -47,7 +48,8 @@ pub fn array(input: &str) -> IResult<&str, Array> {
                 texts.into_iter().map(|t| t.0).collect(),
             ))
         },
-    )(input)
+    )
+    .parse(input)
 }
 
 macro_rules! operator {
@@ -57,7 +59,8 @@ macro_rules! operator {
         pub fn $fname(input: &str) -> IResult<&str, $sname> {
             map_res(tag($symbol), |_| {
                 Result::<$sname, nom::Err<nom::error::Error<&str>>>::Ok($sname)
-            })(input)
+            })
+            .parse(input)
         }
     };
 }

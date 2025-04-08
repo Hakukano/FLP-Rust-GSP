@@ -3,9 +3,9 @@ pub enum Sex {
     Female,
     Other,
 }
-impl Into<String> for Sex {
-    fn into(self) -> String {
-        match self {
+impl From<Sex> for String {
+    fn from(val: Sex) -> Self {
+        match val {
             Sex::Male => "Male".into(),
             Sex::Female => "Female".into(),
             Sex::Other => "Other".into(),

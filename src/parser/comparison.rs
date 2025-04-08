@@ -1,4 +1,4 @@
-use nom::{character::complete::space0, combinator::map_res, sequence::tuple, IResult};
+use nom::{IResult, Parser, character::complete::space0, combinator::map_res};
 
 use super::atom::*;
 
@@ -11,11 +11,12 @@ macro_rules! bi_comparison {
         }
         pub fn $fname(input: &str) -> IResult<&str, $sname> {
             map_res(
-                tuple(($left_func, space0, $oper_func, space0, $right_func)),
+                ($left_func, space0, $oper_func, space0, $right_func),
                 |(left, _, _, _, right): ($left_type, &str, $oper_type, &str, $right_type)| {
                     Result::<$sname, nom::Err<nom::error::Error<&str>>>::Ok($sname { left, right })
                 },
-            )(input)
+            )
+            .parse(input)
         }
     };
 }
@@ -31,7 +32,9 @@ bi_comparison!(
     equal_ci,
     text
 );
-bi_comparison!(IsGreater, Text, Greater, Text, is_greater, text, greater, text);
+bi_comparison!(
+    IsGreater, Text, Greater, Text, is_greater, text, greater, text
+);
 bi_comparison!(IsLess, Text, Less, Text, is_less, text, less, text);
 bi_comparison!(
     IsWildcard,
@@ -52,11 +55,12 @@ macro_rules! uni_comparison {
         pub struct $sname(pub $target_type);
         pub fn $fname(input: &str) -> IResult<&str, $sname> {
             map_res(
-                tuple(($target_func, space0, $oper_func)),
+                ($target_func, space0, $oper_func),
                 |(target, _, _): ($target_type, &str, $oper_type)| {
                     Result::<$sname, nom::Err<nom::error::Error<&str>>>::Ok($sname(target))
                 },
-            )(input)
+            )
+            .parse(input)
         }
     };
 }
