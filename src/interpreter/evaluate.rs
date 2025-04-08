@@ -32,7 +32,7 @@ impl Default for EvaluateRule {
             },
             is_in: |value, target| target.contains(&value.to_string()),
             is_none: |value| {
-                value.to_ascii_lowercase() == "none" || value.to_ascii_lowercase() == "null"
+                value.eq_ignore_ascii_case("none") || value.eq_ignore_ascii_case("null")
             },
         }
     }
