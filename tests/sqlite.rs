@@ -1,6 +1,6 @@
 #![cfg(feature = "sqlite")]
 
-use flp_gsp::{interpreter::sqlite::*, Expression};
+use flp_gsp::{Expression, interpreter::sqlite::*};
 
 #[test]
 fn test_sqlite() {

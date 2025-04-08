@@ -1,6 +1,6 @@
 use nom::{
-    branch::alt, bytes::complete::tag, character::complete::space0, combinator::map_res,
-    sequence::tuple, IResult,
+    IResult, Parser, branch::alt, bytes::complete::tag, character::complete::space0,
+    combinator::map_res,
 };
 
 use super::{atom::*, comparison::*};
@@ -8,35 +8,35 @@ use super::{atom::*, comparison::*};
 #[derive(Debug)]
 pub enum Relation {
     C(Comparison),
-    RAR {
+    Rar {
         left: Box<Relation>,
         right: Box<Relation>,
     },
-    RAC {
-        left: Box<Relation>,
-        right: Comparison,
-    },
-    CAR {
-        left: Comparison,
-        right: Box<Relation>,
-    },
-    CAC {
-        left: Comparison,
-        right: Comparison,
-    },
-    ROR {
-        left: Box<Relation>,
-        right: Box<Relation>,
-    },
-    ROC {
+    Rac {
         left: Box<Relation>,
         right: Comparison,
     },
-    COR {
+    Car {
         left: Comparison,
         right: Box<Relation>,
     },
-    COC {
+    Cac {
+        left: Comparison,
+        right: Comparison,
+    },
+    Ror {
+        left: Box<Relation>,
+        right: Box<Relation>,
+    },
+    Roc {
+        left: Box<Relation>,
+        right: Comparison,
+    },
+    Cor {
+        left: Comparison,
+        right: Box<Relation>,
+    },
+    Coc {
         left: Comparison,
         right: Comparison,
     },
@@ -54,18 +54,19 @@ fn group_end(input: &str) -> IResult<&str, &str> {
 
 fn c(input: &str) -> IResult<&str, Box<Relation>> {
     map_res(
-        tuple((group_start, space0, comparison, space0, group_end)),
+        (group_start, space0, comparison, space0, group_end),
         |(_, _, c, _, _): (&str, &str, Comparison, &str, &str)| {
             Result::<Box<Relation>, nom::Err<nom::error::Error<&str>>>::Ok(Box::new(Relation::C(c)))
         },
-    )(input)
+    )
+    .parse(input)
 }
 
 macro_rules! bi_relation {
     ($fname:ident, $left_func:ident, $oper_func:ident, $right_func:ident, $left_type:ty, $oper_type:ident, $right_type:ty, $relation:ident) => {
         fn $fname(input: &str) -> IResult<&str, Box<Relation>> {
             map_res(
-                tuple((
+                (
                     group_start,
                     space0,
                     $left_func,
@@ -75,7 +76,7 @@ macro_rules! bi_relation {
                     $right_func,
                     space0,
                     group_end,
-                )),
+                ),
                 |(_, _, left, _, _, _, right, _, _): (
                     &str,
                     &str,
@@ -91,7 +92,8 @@ macro_rules! bi_relation {
                         Relation::$relation { left, right },
                     ))
                 },
-            )(input)
+            )
+            .parse(input)
         }
     };
 }
@@ -104,7 +106,7 @@ bi_relation!(
     Box<Relation>,
     And,
     Box<Relation>,
-    RAR
+    Rar
 );
 bi_relation!(
     rac,
@@ -114,7 +116,7 @@ bi_relation!(
     Box<Relation>,
     And,
     Comparison,
-    RAC
+    Rac
 );
 bi_relation!(
     car,
@@ -124,9 +126,11 @@ bi_relation!(
     Comparison,
     And,
     Box<Relation>,
-    CAR
+    Car
 );
-bi_relation!(cac, comparison, and, comparison, Comparison, And, Comparison, CAC);
+bi_relation!(
+    cac, comparison, and, comparison, Comparison, And, Comparison, Cac
+);
 bi_relation!(
     ror,
     relation,
@@ -135,7 +139,7 @@ bi_relation!(
     Box<Relation>,
     Or,
     Box<Relation>,
-    ROR
+    Ror
 );
 bi_relation!(
     roc,
@@ -145,7 +149,7 @@ bi_relation!(
     Box<Relation>,
     Or,
     Comparison,
-    ROC
+    Roc
 );
 bi_relation!(
     cor,
@@ -155,15 +159,17 @@ bi_relation!(
     Comparison,
     Or,
     Box<Relation>,
-    COR
+    Cor
 );
-bi_relation!(coc, comparison, or, comparison, Comparison, Or, Comparison, COC);
+bi_relation!(
+    coc, comparison, or, comparison, Comparison, Or, Comparison, Coc
+);
 
 macro_rules! uni_relation {
     ($fname:ident, $oper_func:ident, $target_func:ident, $oper_type:ty, $target_type:ty, $relation:ident) => {
         fn $fname(input: &str) -> IResult<&str, Box<Relation>> {
             map_res(
-                tuple((
+                (
                     group_start,
                     space0,
                     $oper_func,
@@ -171,7 +177,7 @@ macro_rules! uni_relation {
                     $target_func,
                     space0,
                     group_end,
-                )),
+                ),
                 |(_, _, _, _, target, _, _): (
                     &str,
                     &str,
@@ -185,7 +191,8 @@ macro_rules! uni_relation {
                         Relation::$relation(target),
                     ))
                 },
-            )(input)
+            )
+            .parse(input)
         }
     };
 }
@@ -197,5 +204,6 @@ pub fn relation(input: &str) -> IResult<&str, Box<Relation>> {
     map_res(
         alt((c, rar, rac, car, cac, ror, roc, cor, coc, nr, nc)),
         |r: Box<Relation>| Result::<Box<Relation>, nom::Err<nom::error::Error<&str>>>::Ok(r),
-    )(input)
+    )
+    .parse(input)
 }

@@ -51,7 +51,7 @@ impl From<Comparison> for Expression {
                 node: Node::Any(c.left.0, c.right.0),
             },
             Comparison::IsNull(c) => Self {
-                node: Node::Null(c.0 .0),
+                node: Node::Null(c.0.0),
             },
         }
     }
@@ -61,28 +61,28 @@ impl From<Box<Relation>> for Expression {
     fn from(relation: Box<Relation>) -> Self {
         match *relation {
             Relation::C(c) => c.into(),
-            Relation::RAR { left, right } => Self {
+            Relation::Rar { left, right } => Self {
                 node: Node::And(Box::new(left.into()), Box::new(right.into())),
             },
-            Relation::RAC { left, right } => Self {
+            Relation::Rac { left, right } => Self {
                 node: Node::And(Box::new(left.into()), Box::new(right.into())),
             },
-            Relation::CAR { left, right } => Self {
+            Relation::Car { left, right } => Self {
                 node: Node::And(Box::new(left.into()), Box::new(right.into())),
             },
-            Relation::CAC { left, right } => Self {
+            Relation::Cac { left, right } => Self {
                 node: Node::And(Box::new(left.into()), Box::new(right.into())),
             },
-            Relation::ROR { left, right } => Self {
+            Relation::Ror { left, right } => Self {
                 node: Node::Or(Box::new(left.into()), Box::new(right.into())),
             },
-            Relation::ROC { left, right } => Self {
+            Relation::Roc { left, right } => Self {
                 node: Node::Or(Box::new(left.into()), Box::new(right.into())),
             },
-            Relation::COR { left, right } => Self {
+            Relation::Cor { left, right } => Self {
                 node: Node::Or(Box::new(left.into()), Box::new(right.into())),
             },
-            Relation::COC { left, right } => Self {
+            Relation::Coc { left, right } => Self {
                 node: Node::Or(Box::new(left.into()), Box::new(right.into())),
             },
             Relation::NR(r) => Self {
