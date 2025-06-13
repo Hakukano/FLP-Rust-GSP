@@ -1,6 +1,6 @@
 #![cfg(feature = "mysql")]
 
-use flp_gsp::{Expression, interpreter::mysql::*};
+use flp_rust_gsp::{Expression, interpreter::mysql::*};
 
 #[test]
 fn test_mysql() {
