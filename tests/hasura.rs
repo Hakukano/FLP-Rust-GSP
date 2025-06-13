@@ -1,6 +1,6 @@
 #![cfg(feature = "hasura")]
 
-use flp_gsp::{Expression, interpreter::hasura::*};
+use flp_rust_gsp::{Expression, interpreter::hasura::*};
 
 #[test]
 fn test_sqlite() {
