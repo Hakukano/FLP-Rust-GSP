@@ -1,3 +1,19 @@
+// This library implements GSP (General Search Parser)
+// Copyright (C) 2026  Hakukaze Shikano
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 use chrono::{DateTime, Local, NaiveDate, NaiveDateTime, NaiveTime, ParseError, Utc};
 use rust_decimal::Decimal;
 use std::{collections::HashMap, num::ParseFloatError, num::ParseIntError, str::ParseBoolError};
@@ -103,45 +119,57 @@ pub fn interpret_expression(
         }
         Node::Equal(key, target) => (
             format!("{} = ?", renames.get(key).unwrap_or(key)),
-            vec![types
-                .get(key)
-                .ok_or(Error::UnknownKey(key.to_string()))?
-                .replace_and_return(target)?],
+            vec![
+                types
+                    .get(key)
+                    .ok_or(Error::UnknownKey(key.to_string()))?
+                    .replace_and_return(target)?,
+            ],
         ),
         Node::EqualCI(key, target) => (
             format!("{} LIKE ?", renames.get(key).unwrap_or(key)),
-            vec![types
-                .get(key)
-                .ok_or(Error::UnknownKey(key.to_string()))?
-                .replace_and_return(target)?],
+            vec![
+                types
+                    .get(key)
+                    .ok_or(Error::UnknownKey(key.to_string()))?
+                    .replace_and_return(target)?,
+            ],
         ),
         Node::Greater(key, target) => (
             format!("{} > ?", renames.get(key).unwrap_or(key)),
-            vec![types
-                .get(key)
-                .ok_or(Error::UnknownKey(key.to_string()))?
-                .replace_and_return(target)?],
+            vec![
+                types
+                    .get(key)
+                    .ok_or(Error::UnknownKey(key.to_string()))?
+                    .replace_and_return(target)?,
+            ],
         ),
         Node::Less(key, target) => (
             format!("{} < ?", renames.get(key).unwrap_or(key)),
-            vec![types
-                .get(key)
-                .ok_or(Error::UnknownKey(key.to_string()))?
-                .replace_and_return(target)?],
+            vec![
+                types
+                    .get(key)
+                    .ok_or(Error::UnknownKey(key.to_string()))?
+                    .replace_and_return(target)?,
+            ],
         ),
         Node::Wildcard(key, target) => (
             format!("{} LIKE ?", renames.get(key).unwrap_or(key)),
-            vec![types
-                .get(key)
-                .ok_or(Error::UnknownKey(key.to_string()))?
-                .replace_and_return(&target.replace("*", "%").replace("?", "_"))?],
+            vec![
+                types
+                    .get(key)
+                    .ok_or(Error::UnknownKey(key.to_string()))?
+                    .replace_and_return(&target.replace("*", "%").replace("?", "_"))?,
+            ],
         ),
         Node::Regex(key, target) => (
             format!("{} = ?", renames.get(key).unwrap_or(key)),
-            vec![types
-                .get(key)
-                .ok_or(Error::UnknownKey(key.to_string()))?
-                .replace_and_return(target)?],
+            vec![
+                types
+                    .get(key)
+                    .ok_or(Error::UnknownKey(key.to_string()))?
+                    .replace_and_return(target)?,
+            ],
         ),
         Node::Any(key, targets) => {
             let sql = if targets.is_empty() {
