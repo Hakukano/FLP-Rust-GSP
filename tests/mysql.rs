@@ -5,7 +5,7 @@ use flp_gsp::{Expression, interpreter::mysql::*};
 #[test]
 fn test_mysql() {
     let s = r#"((((! "age" -) & (! "age" > "18")) & ("sex" ? ["male", "Male"] | "sex" ~ "Female")) & "name" * "J?c*")"#;
-    let expression = Expression::try_from_str(s).unwrap();
+    let expression = s.parse::<Expression>().unwrap();
 
     let mut renames = MysqlRenames::new();
     renames.insert("name".into(), "t.name".into());
