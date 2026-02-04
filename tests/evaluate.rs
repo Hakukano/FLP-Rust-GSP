@@ -1,6 +1,6 @@
 #![cfg(feature = "evaluate")]
 
-use flp_rust_gsp::{Expression, interpreter::evaluate::*};
+use flp_gsp::{Expression, interpreter::evaluate::*};
 
 mod common;
 

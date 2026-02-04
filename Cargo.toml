@@ -1,27 +1,25 @@
 [package]
-name = "flp-rust-gsp"
-version = "1.1.0"
+name = "flp-gsp"
+version = "2.0.0"
 authors = ["Hakukaze Shikano <hakukano@flp.zone>"]
 edition = "2024"
 description = "General search parser"
 repository = "https://github.com/Hakukano/FLP-Rust-GSP"
-documentation = "https://docs.rs/flp-rust-gsp"
-license = "MIT OR Apache-2.0"
+documentation = "https://docs.rs/flp-gsp"
+license = "GPL-3.0-or-later"
 readme = "README.md"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 bit-vec = { version = "0.8", optional = true }
 chrono = { version = "0.4", optional = true }
 ipnetwork = { version = "0.21", optional = true }
 nom = "8.0"
-regex = "1.11"
-rust_decimal = { version = "1.37", optional = true }
+regex = "1.12"
+rust_decimal = { version = "1.40", optional = true }
 serde_json = { version = "1.0", optional = true }
 thiserror = "2.0"
-uuid = { version = "1.16", optional = true }
-wildmatch = { version = "2.4", optional = true }
+uuid = { version = "1.20", optional = true }
+wildmatch = { version = "2.6", optional = true }
 
 [features]
 default = []

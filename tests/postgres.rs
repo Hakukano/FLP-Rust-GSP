@@ -1,6 +1,6 @@
 #![cfg(feature = "postgres")]
 
-use flp_rust_gsp::{Expression, interpreter::postgres::*};
+use flp_gsp::{Expression, interpreter::postgres::*};
 
 #[test]
 fn test_postgres() {
