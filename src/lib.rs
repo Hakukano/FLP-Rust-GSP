@@ -19,8 +19,16 @@
 pub mod interpreter;
 mod parser;
 
+use std::str::FromStr;
+
 use parser::comparison::Comparison;
 use parser::relation::Relation;
+
+#[derive(Debug, thiserror::Error)]
+pub enum Error {
+    #[error("Parser error {0}")]
+    Parser(String),
+}
 
 #[derive(Debug)]
 pub enum Node {
@@ -111,10 +119,12 @@ impl From<Box<Relation>> for Expression {
     }
 }
 
-impl Expression {
-    pub fn try_from_str(s: &str) -> Result<Self, String> {
+impl FromStr for Expression {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
         Ok(parser::relation::relation(s)
-            .map_err(|err| err.to_string())?
+            .map_err(|err| Error::Parser(err.to_string()))?
             .1
             .into())
     }

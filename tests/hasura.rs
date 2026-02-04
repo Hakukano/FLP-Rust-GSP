@@ -5,7 +5,7 @@ use flp_gsp::{Expression, interpreter::hasura::*};
 #[test]
 fn test_sqlite() {
     let s = r#"(  (((! "age" -) & (! "age" > "18")) & ("sex" ? ["male", "Male"     ] | "sex" ~ "Female")) & "name" * "J?c*")"#;
-    let expression = Expression::try_from_str(s).unwrap();
+    let expression = s.parse::<Expression>().unwrap();
 
     let mut types = HasuraTypes::new();
     types.insert("age".into(), HasuraType::Integer);

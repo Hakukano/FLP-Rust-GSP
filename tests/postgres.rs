@@ -5,7 +5,7 @@ use flp_gsp::{Expression, interpreter::postgres::*};
 #[test]
 fn test_postgres() {
     let s = r#"((((! "age" -) & (! "age" > "18")) & ("sex" ? ["male", "Male"] | "sex" ~ "Female")) & "\"name\"" * "J?c*")"#;
-    let expression = Expression::try_from_str(s).unwrap();
+    let expression = s.parse::<Expression>().unwrap();
     println!("{:?}", expression);
 
     let mut renames = PostgresRenames::new();

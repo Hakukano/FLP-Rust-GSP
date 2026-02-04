@@ -10,7 +10,7 @@ use common::*;
 fn test_evaluate() {
     let s =
         r#"(((! "age" > "18") & ("sex" ? ["male", "Male"] | "sex" ~ "Female")) & "name" * "J?c*")"#;
-    let expression = Expression::try_from_str(s).unwrap();
+    let expression = s.parse::<Expression>().unwrap();
 
     let mut rules = EvaluateRules::new();
     rules.insert("name".into(), EvaluateRule::default());
@@ -74,6 +74,6 @@ fn test_evaluate() {
 #[test]
 fn test_invalid() {
     let s = r#"("="")"#;
-    let expression = Expression::try_from_str(s);
+    let expression = s.parse::<Expression>();
     assert!(expression.is_err());
 }
